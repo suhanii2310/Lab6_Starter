@@ -24,6 +24,7 @@ function getRecipesFromStorage() {
 	// A9. TODO - Complete the functionality as described in this function
 	//           header. It is possible in only a single line, but should
 	//           be no more than a few lines.
+	return JSON.parse(localStorage.getItem('recipes')) || [];
 }
 
 /**
@@ -39,6 +40,12 @@ function addRecipesToDocument(recipes) {
 	//            create a <recipe-card> element for each one, and populate
 	//            each <recipe-card> with that recipe data using element.data = ...
 	//            Append each element to <main>
+	const main = document.querySelector('main');
+	recipes.forEach(recipe => {
+		const card = document.createElement('recipe-card');
+		card.data = recipe;
+		main.appendChild(card);
+	});
 }
 
 /**
@@ -51,6 +58,7 @@ function saveRecipesToStorage(recipes) {
 	// B1. TODO - Complete the functionality as described in this function
 	//            header. It is possible in only a single line, but should
 	//            be no more than a few lines.
+	localStorage.setItem('recipes', JSON.stringify(recipes));
 }
 
 /**
@@ -76,4 +84,50 @@ function initFormHandler() {
 	// Steps B12 & B13 will occur inside the event listener from step B11
 	// B12. TODO - Clear the local storage
 	// B13. TODO - Delete the contents of <main>
+	// B2
+	const form = document.getElementById('new-recipe');
+
+	// B3
+	form.addEventListener('submit', (e) => {
+	  e.preventDefault();
+  
+	  // B4
+	  const formData = new FormData(form);
+  
+	  // B5
+	  const recipeObject = {};
+	  for (const [key, value] of formData.entries()) {
+		recipeObject[key] = value;
+	  }
+  
+	  // B6
+	  const newCard = document.createElement('recipe-card');
+  
+	  // B7
+	  newCard.data = recipeObject;
+  
+	  // B8
+	  document.querySelector('main').appendChild(newCard);
+  
+	  // B9
+	  const existingRecipes = getRecipesFromStorage();
+	  existingRecipes.push(recipeObject);
+	  saveRecipesToStorage(existingRecipes);
+  
+	  // Optional: clear form after submit
+	  form.reset();
+	});
+  
+	// B10
+	const clearBtn = document.querySelector('button.danger');
+  
+	// B11
+	clearBtn.addEventListener('click', () => {
+	  // B12
+	  localStorage.clear();
+  
+	  // B13
+	  document.querySelector('main').innerHTML = '';
+	});
 }
+
